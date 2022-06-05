@@ -1,10 +1,12 @@
+use std::{cell::Cell, hash::Hash};
+
 use crate::prelude::*;
 
 /// The `CellValue` enumerated type provides a series of descriptions which describe a particular cell on the board.
 /// Using an enumerated type allows for easy reasoning and pattern-matching.
-#[derive(Debug)]
+#[derive(Debug, Copy)]
 pub enum CellValue {
-    Covered(bool),
+    Uncovered(bool),
     Mine(bool),
     Number(u32),
     Flag(bool),
@@ -17,32 +19,25 @@ pub struct Board {
     width: u32,
     height: u32,
     difficulty: u32,
-    playing_board: HashMap<(u32, u32), [CellValue; 4]>,
+    covered: HashMap<(u32, u32), CellValue>,
+    mines: HashMap<(u32, u32), CellValue>,
+    numbers: HashMap<(u32, u32), CellValue>,
+    flagged: HashMap<(u32, u32), CellValue>,
 }
 
 impl Board {
     /// Initializes a board of paramterized width, height, difficulty (number of mines).
     /// This simply sets the board as being `[Covered(true), Mine(false), Number(0), Flag(false)]
-    pub fn new(height: u32, width: u32, difficulty: u32) -> Self {
+    pub fn new(width: u32, height: u32, difficulty: u32) -> Self {
+        use crate::CellValue::*;
         Self {
             width,
             height,
             difficulty,
-            playing_board: {
-                use crate::board::CellValue::*;
-
-                let mut playing_board: HashMap<(u32, u32), [CellValue; 4]> = HashMap::new();
-
-                for x in 0..width {
-                    for y in 0..height {
-                        let mut cell_descriptions: [CellValue; 4] =
-                            [Covered(true), Mine(false), Number(0), Flag(false)];
-                        playing_board.insert((x, y), cell_descriptions);
-                    }
-                }
-
-                playing_board
-            },
+            covered: initialize_cells(width, height, Uncovered(false)),
+            mines: initialize_cells(width, height, Mine(false)),
+            numbers: initialize_cells(width, height, Number(0)),
+            flagged: initialize_cells(width, height, Flag(false)),
         }
     }
 
@@ -53,8 +48,21 @@ impl Board {
 
         // Storage vector to contain all the pairs determined by rng to have the mine
         let mut mine_pairs: Vec<(u32, u32)> = get_random_pairs(self.width, self.height, difficulty); 
-
     }
+      
+}
+
+/// Parameterized way to initialize all cell values with some value.
+fn initialize_cells(w:u32, h:u32, cell_val: CellValue) -> HashMap<(u32, u32), CellValue> {
+    let mut hash: HashMap<(u32, u32), CellValue> = HashMap::new();
+
+    for i in 0..w {
+        for j in 0..h {
+            hash.insert((i, j), cell_val);
+        }
+    }
+
+    hash
 }
 
 /// Takes self.difficulty to determine how many pairs will have a `Mine(true)`.
