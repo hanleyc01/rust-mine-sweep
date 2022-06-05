@@ -1,9 +1,2 @@
-# Skip everything
-*
-
-# Include
-!target/doc
-!src/
-!Cargo.lock
-!Cargo.toml
-!README.md
+target/
+.DS_Store/
