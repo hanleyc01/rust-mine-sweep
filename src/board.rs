@@ -29,33 +29,28 @@ impl Board {
             width,
             height,
             difficulty,
-            playing_board: initialize_board(width, height, difficulty),
+            playing_board: {
+              use crate::board::CellValue::*;
+              
+              let mut playing_board: HashMap<(u32, u32), [CellValue; 4]> = HashMap::new();
+
+              for x in 0..width {
+                  for y in 0..height {
+                      let mut cell_descriptions: [CellValue; 4] = [
+                          Covered(true),
+                          Mine(false),
+                          Number(0),
+                          Flag(false),
+                      ];
+                      playing_board.insert((x,y), cell_descriptions);
+                  }
+              }
+          
+              playing_board            
+            }
         }
     }
+
+
     
-}
-
-/// Helper function which ought to intialize our playing board with three goals:
-/// 1. Describe all cells as being `Covered(bool)`;
-/// 2. Randomize the placement of `Mine(bool)` within the cells;
-/// 3. Describe the cells surrounding the cells with mines with a specific `Number(u32)`, where `u32` is defined as the amount of cells
-/// nearby which contain a `Mine(true)`;
-/// 4. set all cells to `Flag(false)`.
-pub fn initialize_board(width: u32, height: u32, diff: u32) -> HashMap<(u32, u32), [CellValue; 4]> {
-    use crate::CellValue::*;
-    let mut playing_board: HashMap<(u32, u32), [CellValue; 4]> = HashMap::new();
-
-    for x in 0..width {
-        for y in 0..height {
-            let mut cell_descriptions: [CellValue; 4] = [
-                Covered(true),
-                Mine(false),
-                Number(0),
-                Flag(false),
-            ];
-            playing_board.insert((x,y), cell_descriptions);
-        }
-    }
-
-    playing_board
 }
