@@ -2,8 +2,9 @@ use crate::prelude::*;
 
 mod board;
 mod prelude {
-    pub const WIDTH: usize = 50;
-    pub const HEIGHT: usize = 75;
+    pub const WIDTH: usize = 5;
+    pub const HEIGHT: usize = 10;
+    pub const NUM_MINES: usize = 5;
     
     pub use rand::Rng;
     pub use std::collections::HashMap;
@@ -13,5 +14,7 @@ mod prelude {
 
 
 fn main() {
-    todo!();
+    let test = Board::new();
+
+    println!("{:#?}", &test);
 }
