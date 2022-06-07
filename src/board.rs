@@ -44,21 +44,20 @@ impl Board {
     pub fn new() -> Self {
         Self {
             game_board: {
-                
-                let mines: [(usize, usize) ; NUM_MINES] = get_random_pairs();
-                
-                let mut board: [[Tile; HEIGHT]; WIDTH] = [[Tile::init_no_mine(); HEIGHT] ; WIDTH];
+                let mines: [(usize, usize); NUM_MINES] = get_random_pairs();
+
+                let mut board: [[Tile; HEIGHT]; WIDTH] = [[Tile::init_no_mine(); HEIGHT]; WIDTH];
                 for i in 0..WIDTH {
                     for j in 0..HEIGHT {
-                        
-                        let pair = (i,j);
-                        
+                        let pair = (i, j);
+
                         if mines.contains(&pair) {
                             board[i][j] = Tile::init_mine();
                         }
-
                     }
                 }
+
+                let board = get_numbers(board);
 
                 board
             },
@@ -82,6 +81,28 @@ impl Tile {
             visibility: Visibility::Covered,
         }
     }
+
+    /// Add function which "adds" `Tile.num` to the `MineProx` enum one above (excluding Eight).
+    fn add(&mut self) {
+        use crate::MineProx::*;
+
+        let poss_add: Option<MineProx> = match self.num {
+            Zero => Some(One),
+            One => Some(Two),
+            Two => Some(Three),
+            Three => Some(Four),
+            Four => Some(Five),
+            Five => Some(Six),
+            Six => Some(Seven),
+            Seven => Some(Eight),
+            _ => None,
+        };
+
+        match poss_add {
+            Some(x) => self.num = x,
+            _ => (),
+        }
+    }
 }
 
 /// Helper function which generates an `array` of `(u32, u32)`, size `const NUM_MINES`,
@@ -99,4 +120,45 @@ fn get_random_pairs() -> [(usize, usize); NUM_MINES] {
     }
 
     arr
+}
+
+fn get_numbers(board: [[Tile ; HEIGHT] ; WIDTH]) -> [[Tile ; HEIGHT] ; WIDTH] {
+
+    let mut board = board;
+
+    for i in 0..WIDTH {
+        for j in 0..HEIGHT {
+            if board[i][j].num != MineProx::Mine {
+
+                if i == 0 {
+                    if j == 0 {
+                        todo!();
+                    } else if j == board[i].len() {
+                        todo!();
+                    } else {
+                        todo!();
+                    }
+                } else if i == board.len() {
+                    if j == 0 {
+                        todo!();
+                    } else if j == board[i].len() {
+                        todo!();
+                    } else {
+                        todo!();
+                    }
+                } else {
+                    if j == 0 {
+                        todo!();
+                    } else if j == board[i].len() {
+                        todo!();
+                    } else {
+                        todo!();
+                    }
+                }
+
+            }
+        }
+    }
+
+    board
 }
