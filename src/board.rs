@@ -83,7 +83,7 @@ impl Tile {
     }
 
     /// Add function which "adds" `Tile.num` to the `MineProx` enum one above (excluding Eight).
-    fn add(&mut self) {
+    pub fn add(&mut self) {
         use crate::MineProx::*;
 
         let poss_add: Option<MineProx> = match self.num {
@@ -122,17 +122,25 @@ fn get_random_pairs() -> [(usize, usize); NUM_MINES] {
     arr
 }
 
-fn get_numbers(board: [[Tile ; HEIGHT] ; WIDTH]) -> [[Tile ; HEIGHT] ; WIDTH] {
-
+fn get_numbers(board: [[Tile; HEIGHT]; WIDTH]) -> [[Tile; HEIGHT]; WIDTH] {
     let mut board = board;
 
     for i in 0..WIDTH {
         for j in 0..HEIGHT {
             if board[i][j].num != MineProx::Mine {
-
                 if i == 0 {
                     if j == 0 {
-                        todo!();
+                        let arr: [Tile; 3] =
+                            [ board[i][j + 1], board[i + 1][j + 1], board[i + 1][j] ];
+                        let arr_iter = arr.iter();
+
+                        for tile in arr_iter {
+                            if tile.num == MineProx::Mine {
+                                board[i][j].num = Tile::add(&mut board[i][j].num); // for later
+                            }
+                        }
+
+
                     } else if j == board[i].len() {
                         todo!();
                     } else {
@@ -155,7 +163,6 @@ fn get_numbers(board: [[Tile ; HEIGHT] ; WIDTH]) -> [[Tile ; HEIGHT] ; WIDTH] {
                         todo!();
                     }
                 }
-
             }
         }
     }
