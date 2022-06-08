@@ -56,9 +56,56 @@ impl Board {
                             board[i][j] = Tile::init_mine();
 
                         } else { // If not a mine
-                            let board2 = board.clone();
+                            let mut board2 = board.clone();
                             let neighbors: Vec<Option<&Tile>> = vec![
                                 
+                                // LEFT SIDE
+                                if i != 0 { // left
+                                    get_2d(board.get(i - 1), j)
+                                } else {
+                                    None
+                                }, 
+                                if i != 0 && j != 0 { // left updiag
+                                    get_2d(board.get(i - 1), j - 1)
+                                } else {
+                                    None
+                                },
+                                if i != 0 && j != board[i].len() { // left downdiag
+                                    get_2d(board.get(i - 1), j + 1)
+                                } else {
+                                    None
+                                },
+
+                                // RIGHT
+                                if i != board.len() { // right
+                                    get_2d(board.get(i + 1), j) 
+                                } else {
+                                    None
+                                },
+                                if i != board.len() && j != 0 { // right updiag
+                                    get_2d(board.get(i + 1), j - 1)
+                                } else {
+                                    None
+                                },
+                                if i != board.len() && j != board[i].len() { // right downdiag
+                                    get_2d(board.get(i + 1), j + 1)
+                                } else {
+                                    None
+                                },
+                                
+                                // UP-DOWN 
+                                if j != board[i].len() { // down
+                                    get_2d(board.get(i), j + 1)
+                                } else {
+                                    None
+                                },
+                                if j != 0 { // up
+                                    get_2d(board.get(i), j - 1)
+                                } else {
+                                    None
+                                },
+
+
                             ];
 
                             for t in neighbors.into_iter() {
@@ -66,12 +113,13 @@ impl Board {
                                     Some(x) => {
                                         let x = *x;
                                         if x.num == MineProx::Mine {
-                                            board[i][j].add()
+                                            board2[i][j].add()
                                         }
                                     }
                                     _ => (),
                                 }
                             }
+                            board = board2;
                         }
                     }
                 }
