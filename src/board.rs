@@ -45,23 +45,48 @@ impl Board {
         Self {
             game_board: {
                 let mines: [(usize, usize); NUM_MINES] = get_random_pairs();
-
                 let mut board: [[Tile; HEIGHT]; WIDTH] = [[Tile::init_no_mine(); HEIGHT]; WIDTH];
                 for i in 0..WIDTH {
                     for j in 0..HEIGHT {
+                        
                         let pair = (i, j);
-
-                        if mines.contains(&pair) {
+                        
+                        if mines.contains(&pair) { // if a mine
+                            
                             board[i][j] = Tile::init_mine();
+
+                        } else { // If not a mine
+                            let board2 = board.clone();
+                            let neighbors: Vec<Option<&Tile>> = vec![
+                                
+                            ];
+
+                            for t in neighbors.into_iter() {
+                                match t {
+                                    Some(x) => {
+                                        let x = *x;
+                                        if x.num == MineProx::Mine {
+                                            board[i][j].add()
+                                        }
+                                    }
+                                    _ => (),
+                                }
+                            }
                         }
                     }
                 }
-
-                let board = get_numbers(board);
-
                 board
             },
         }
+    }
+}
+
+/// Workaround for the disgusting nested for-loops that we might have to generate
+/// if we wanted to get at the cells.
+fn get_2d(tile_arr: Option<&[Tile; HEIGHT]>, i: usize) -> Option<&Tile> {
+    match tile_arr {
+        Some(t) => t.get(i),
+        _ => None,
     }
 }
 
@@ -120,52 +145,4 @@ fn get_random_pairs() -> [(usize, usize); NUM_MINES] {
     }
 
     arr
-}
-
-fn get_numbers(board: [[Tile; HEIGHT]; WIDTH]) -> [[Tile; HEIGHT]; WIDTH] {
-    let mut board = board;
-
-    for i in 0..WIDTH {
-        for j in 0..HEIGHT {
-            if board[i][j].num != MineProx::Mine {
-                if i == 0 {
-                    if j == 0 {
-                        let arr: [Tile; 3] =
-                            [ board[i][j + 1], board[i + 1][j + 1], board[i + 1][j] ];
-                        let arr_iter = arr.iter();
-
-                        for tile in arr_iter {
-                            if tile.num == MineProx::Mine {
-                                board[i][j].num = Tile::add(&mut board[i][j].num); // for later
-                            }
-                        }
-
-
-                    } else if j == board[i].len() {
-                        todo!();
-                    } else {
-                        todo!();
-                    }
-                } else if i == board.len() {
-                    if j == 0 {
-                        todo!();
-                    } else if j == board[i].len() {
-                        todo!();
-                    } else {
-                        todo!();
-                    }
-                } else {
-                    if j == 0 {
-                        todo!();
-                    } else if j == board[i].len() {
-                        todo!();
-                    } else {
-                        todo!();
-                    }
-                }
-            }
-        }
-    }
-
-    board
 }
