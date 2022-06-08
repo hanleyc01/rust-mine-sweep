@@ -48,64 +48,67 @@ impl Board {
                 let mut board: [[Tile; HEIGHT]; WIDTH] = [[Tile::init_no_mine(); HEIGHT]; WIDTH];
                 for i in 0..WIDTH {
                     for j in 0..HEIGHT {
-                        
                         let pair = (i, j);
-                        
-                        if mines.contains(&pair) { // if a mine
-                            
-                            board[i][j] = Tile::init_mine();
 
-                        } else { // If not a mine
+                        if mines.contains(&pair) {
+                            // if a mine
+
+                            board[i][j] = Tile::init_mine();
+                        } else {
+                            // If not a mine
                             let mut board2 = board.clone();
                             let neighbors: Vec<Option<&Tile>> = vec![
-                                
                                 // LEFT SIDE
-                                if i != 0 { // left
+                                if i != 0 {
+                                    // left
                                     get_2d(board.get(i - 1), j)
                                 } else {
                                     None
-                                }, 
-                                if i != 0 && j != 0 { // left updiag
+                                },
+                                if i != 0 && j != 0 {
+                                    // left updiag
                                     get_2d(board.get(i - 1), j - 1)
                                 } else {
                                     None
                                 },
-                                if i != 0 && j != board[i].len() { // left downdiag
+                                if i != 0 && j != board[i].len() {
+                                    // left downdiag
                                     get_2d(board.get(i - 1), j + 1)
                                 } else {
                                     None
                                 },
-
                                 // RIGHT
-                                if i != board.len() { // right
-                                    get_2d(board.get(i + 1), j) 
+                                if i != board.len() {
+                                    // right
+                                    get_2d(board.get(i + 1), j)
                                 } else {
                                     None
                                 },
-                                if i != board.len() && j != 0 { // right updiag
+                                if i != board.len() && j != 0 {
+                                    // right updiag
                                     get_2d(board.get(i + 1), j - 1)
                                 } else {
                                     None
                                 },
-                                if i != board.len() && j != board[i].len() { // right downdiag
+                                if i != board.len() && j != board[i].len() {
+                                    // right downdiag
                                     get_2d(board.get(i + 1), j + 1)
                                 } else {
                                     None
                                 },
-                                
-                                // UP-DOWN 
-                                if j != board[i].len() { // down
+                                // UP-DOWN
+                                if j != board[i].len() {
+                                    // down
                                     get_2d(board.get(i), j + 1)
                                 } else {
                                     None
                                 },
-                                if j != 0 { // up
+                                if j != 0 {
+                                    // up
                                     get_2d(board.get(i), j - 1)
                                 } else {
                                     None
                                 },
-
-
                             ];
 
                             for t in neighbors.into_iter() {
@@ -119,7 +122,7 @@ impl Board {
                                     _ => (),
                                 }
                             }
-                            board = board2;
+                            board = board2; // dirty, villainous trick to sidestep mutability :devil:
                         }
                     }
                 }
@@ -156,9 +159,8 @@ impl Tile {
     }
 
     /// Add function which "adds" `Tile.num` to the `MineProx` enum one above (excluding Eight).
-    pub fn add(&mut self) {
+    fn add(&mut self) {
         use crate::MineProx::*;
-
         let poss_add: Option<MineProx> = match self.num {
             Zero => Some(One),
             One => Some(Two),
@@ -175,6 +177,17 @@ impl Tile {
             Some(x) => self.num = x,
             _ => (),
         }
+    }
+
+    /// Method which uncovers a tile is uncovered with a bomb, then it returns `true`, else `false`.
+    pub fn uncover(&mut self) -> bool {
+        self.visibility = Visibility::Uncovered;
+        self.num == MineProx::Mine
+    }
+
+    /// Method to change tile to `Visibility::Flag`
+    pub fn flag(&mut self) {
+        self.visibility = Visibility::Flag;
     }
 }
 
