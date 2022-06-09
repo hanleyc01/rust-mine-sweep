@@ -1,30 +1,30 @@
-use crate::prelude::*;
-use eframe::egui::{CentralPanel, Ui};
+use eframe::egui::Visuals;
 
-/// Our application, contains a score, a timer, and the gameboard itself
-pub struct MineSweep {
-    score: usize,
-    time: f32,
-    game: Board,
-}
+use crate::prelude::*;
+
+#[derive(Default)]
+pub struct MineSweep {}
 
 impl MineSweep {
-    /// Initialization of our gameboard
-    pub fn new() -> Self {
-        Self {
-            score: 0,
-            time: 0.,
-            game: Board::new(),
-        }
+    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+        // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
+        // Restore app state using cc.storage (requires the "persistence" feature).
+        // Use the cc.gl (a glow::Context) to create graphics shaders and buffers that you can use
+        // for e.g. egui::PaintCallback.
+        Self::default()
     }
 }
 
-impl App for MineSweep {
-    fn update(&mut self, ctx: &egui::Context, frame: &mut Frame) {
-        CentralPanel::default().show(ctx, |Ui| Ui.label("MineSweep"));
-    }
-
-    fn save(&mut self, _storage: &mut dyn Storage) {
-        todo!()
+impl eframe::App for MineSweep {
+    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        ctx.set_visuals(egui::Visuals::dark()); 
+        egui::TopBottomPanel::top("Menu Panel").show(ctx, |ui| {
+            ui.label("Welcome to Rust Mine Sweeper!");
+         });
+         egui::CentralPanel::default().show(ctx, |ui| {
+            if ui.add(egui::Button::new("⚪")).clicked() {
+            }
+            
+         });
     }
 }
